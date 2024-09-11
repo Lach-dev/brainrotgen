@@ -21,6 +21,8 @@ reddit = praw.Reddit(
 
 
 def scrape_posts(count: int) -> list[RedditPost]:
+    return [RedditPost("banana man", "hahah he said manana", "bob kimberly", ["comment1", "comment2", "comment3"])]
+
     scraped_posts: list[RedditPost] = []
 
     # Select the subreddit
