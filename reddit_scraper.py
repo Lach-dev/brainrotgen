@@ -29,9 +29,6 @@ def scrape_posts(count: int) -> list[RedditPost]:
     top_posts = subreddit.top(limit=count, time_filter="month")
 
     for post in top_posts:
-        print("Title: ", post.title)
-        print("Content: ", post.selftext)
-
         comments = []
         post.comments.replace_more(limit=0)  # Fetch all comments
         for top_comment in post.comments[:10]:  # Get the top 10
