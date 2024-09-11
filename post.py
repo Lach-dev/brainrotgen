@@ -1,58 +1,62 @@
+import time
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-import time
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 # chrome webdriver
 driver = webdriver.Chrome()
+driver.maximize_window()
 
 # navigate to login
 driver.get("https://www.instagram.com/accounts/login/")
-time.sleep(5)
 
-# Input username and password
-username = driver.find_element(By.NAME, 'username')
-password = driver.find_element(By.NAME, 'password')
-
-username.send_keys("brainrotgen1") # 😴
-password.send_keys("Tyler1738!")
-password.send_keys(Keys.RETURN)
-time.sleep(5)
-
-# close save pass popup
 try:
+    # wait for the username field to show up
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.NAME, 'username'))
+    )
+    username = driver.find_element(By.NAME, 'username')
+    password = driver.find_element(By.NAME, 'password')
+
+    username.send_keys("brainrotgen1")
+    password.send_keys("Tyler1738!")
+    password.send_keys(Keys.RETURN)
+
+    # wait for the not now button to show up
+    WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, '//div[@role="button" and text()="Not now"]'))
+    )
     not_now_button = driver.find_element(By.XPATH, '//div[@role="button" and text()="Not now"]')
     not_now_button.click()
-except Exception as e:
-    print(f"An error occurred: {e}")
-time.sleep(2)
 
-# another not now
-try:
+    # wait for the not now button to show up
+    WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, '//button[text()="Not Now"]'))
+    )
     not_now_button = driver.find_element(By.XPATH, '//button[text()="Not Now"]')
     not_now_button.click()
-except Exception as e:
-    print(f"An error occurred: {e}")
-time.sleep(3)
 
-# navigate to the create button
-try:
+    # wait for the create button to show up
+    WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, '//span[text()="Create"]'))
+    )
     new_post_button = driver.find_element(By.XPATH, '//span[text()="Create"]')
     new_post_button.click()
-except Exception as e:
-    print(f"An error occurred: {e}")
-time.sleep(2)
 
-# from computer
-try:
+    # wait for the upload button to show up
+    WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, '//button[text()="Select from computer"]'))
+    )
     upload = driver.find_element(By.XPATH, '//button[text()="Select from computer"]')
     upload.click()
+
+    # next part will be diff depending on host, will hold off on this for now
+
 except Exception as e:
     print(f"An error occurred: {e}")
-time.sleep(4)
 
-# upload video here, code will be different depending on host so will hold out for now
-
-
-# close the browser
+# Close the browser
 driver.quit()
