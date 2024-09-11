@@ -1,5 +1,5 @@
 import praw
-from config import Config
+from config import settings
 
 
 class RedditPost:
@@ -14,21 +14,19 @@ class RedditPost:
 
 
 reddit = praw.Reddit(
-    client_id=Config.REDDIT_CLIENT_ID,
-    client_secret=Config.REDDIT_CLIENT_SECRET,
-    user_agent=Config.REDDIT_USER_AGENT,
+    client_id=settings.REDDIT_CLIENT_ID,
+    client_secret=settings.REDDIT_CLIENT_SECRET,
+    user_agent=settings.REDDIT_USER_AGENT,
 )
 
 
 def scrape_posts(count: int) -> list[RedditPost]:
-    return [RedditPost("banana man", "hahah he said manana", "bob kimberly", ["comment1", "comment2", "comment3"])]
-
     scraped_posts: list[RedditPost] = []
 
     # Select the subreddit
-    subreddit = reddit.subreddit("tifu")
+    subreddit = reddit.subreddit(settings.SUBREDDIT_NAME)
 
-    top_posts = subreddit.top(limit=count, time_filter="month")
+    top_posts = subreddit.top(limit=count, time_filter="hour")
 
     for post in top_posts:
         comments = []

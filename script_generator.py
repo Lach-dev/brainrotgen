@@ -1,29 +1,34 @@
-from openai import OpenAI
-from config import Config
+from config import settings
 from reddit_scraper import RedditPost
 from pathlib import Path
 from openai import OpenAI
+from functools import lru_cache
 
-client = OpenAI(api_key=Config.OPENAI_API_KEY)
+client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
 
 class ScriptGenerator:
     def __init__(self):
-        self.client = OpenAI(api_key=Config.OPENAI_API_KEY)
-        self.model = Config.OPENAI_MODEL
+        self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
+        self.model = settings.OPENAI_MODEL
 
+    @lru_cache(maxsize=128)
     def generate_script(self, post: RedditPost) -> (str, str):
-        system_prompt = ("You're an expert at creating chaotic, brain-melting reads. "
-                         "You’re going to read this Reddit post like a regular person who's hyped up on too much coffee and way too much internet. "
-                         "First, say something wild about the post and the author. Then, describe what’s going on and read the post casually. "
-                         f"Example: 'Yo, this user {post.author} just dropped the wildest take! Check this out!' "
-                         "After that, go ahead and dive straight into what the post says without labeling anything. "
-                         "Also, when talking about the replies, just act like you're casually reacting to them—no need to label them as 'comments' or anything formal like that.")
+        audio_file_name = f"audio/speech_{post.author}_{post.title}.mp3"
 
-        post_prompt = (f"Alright, here’s the Reddit post. No labels, just go: \n"
-                       f"{post.title}\n\n"
-                       f"{post.content}\n\n"
-                       f"{post.author} said that. Here are some replies:\n"
+        system_prompt = ("You will be provided with a reddit post and its replies."
+                         "Introduce the post and mention the author. Then read the contents of the post."
+                         "After that, mention the replies to the post. Do not provide any labels. Do not say Author: Title: Content: etc."
+                         "This is a post from r/AskReddit. Introduce the post like you are a narrator. Say something like "
+                         "the user {post.authr} asked: "
+                         "then read the post. After that, say something like here are some replies: and read the replies."
+                         "like 'one user said: or 'another user replied:'.")
+
+        post_prompt = (f"Here’s the Reddit post. No labels: \n"
+                       f"author: {post.author}\n\n"
+                       f"title: {post.title}\n\n"
+                       f"content: {post.content}\n\n"
+                       f"Here are some replies:\n"
                        f"{' '.join(post.comments)}")
 
         response = self.client.chat.completions.create(
@@ -32,11 +37,10 @@ class ScriptGenerator:
                 {"role": "user", "content": post_prompt}
             ],
             model=self.model,
+            max_tokens=250
         )
 
         script = response.choices[0].message.content
-
-        audio_file_name = f"audio/speech_{post.author}_{post.title}.mp3"
 
         speech_file_path = Path(__file__).parent / audio_file_name
         response = client.audio.speech.create(
