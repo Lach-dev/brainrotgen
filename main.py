@@ -3,6 +3,7 @@ from script_generator import ScriptGenerator
 from stitch_video import generate_base_video
 import logging
 from config import settings
+from post import setup, post_video
 
 logging.basicConfig(level=logging.INFO)
 
@@ -31,4 +32,6 @@ def main():
 
 
 if __name__ == "__main__":
+    # launch chrome and login
+    setup()
     main()
