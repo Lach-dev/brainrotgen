@@ -2,6 +2,7 @@ import os
 import time
 
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -10,8 +11,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+chrome_options = Options()
+chrome_options.add_experimental_option("detach", True)
 # chrome webdriver
-driver = webdriver.Chrome()
+driver = webdriver.Chrome(options=chrome_options)
 driver.maximize_window()
 
 def setup():
@@ -64,17 +67,33 @@ def post_video(video_path):
                 (By.XPATH, '//button[text()="Select from computer"]')
             )
         )
-        upload = driver.find_element(By.XPATH, '//button[text()="Select from computer"]')
-        upload.click()
+        file_input = driver.find_element(By.XPATH, '//input[@type="file"]')
+        file_input.send_keys(video_path)  # Send the path of the file to be uploaded
 
-        # next part will be diff depending on host, will hold off on this for now
-        time.sleep(100)
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable(
+                (By.XPATH, '//div[@role="button" and contains(@class, "x1i10hfl") and text()="Next"]'))
+        ).click()
+
+        #again next
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable(
+                (By.XPATH, '//div[@role="button" and contains(@class, "x1i10hfl") and text()="Next"]'))
+        ).click()
+
+        # final sahre
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable(
+                (By.XPATH, '//div[@role="button" and contains(@class, "x1i10hfl") and text()="Share"]'))
+        ).click()
+
+        time.sleep(10)
+
+        # refresh page
+        driver.refresh()
 
     except Exception as e:
         print(f"An error occurred: {e}")
 
 def quit_insta():
     driver.quit()
-
-setup()
-post_video("test.mp4")

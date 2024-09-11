@@ -30,6 +30,8 @@ def main():
 
     # upload to instagram reels
 
+    # post_video(stitched_video_path)
+
 
 if __name__ == "__main__":
     # launch chrome and login
