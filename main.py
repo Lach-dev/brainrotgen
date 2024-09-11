@@ -2,6 +2,7 @@ from reddit_scraper import scrape_posts
 from script_generator import ScriptGenerator
 from stitch_video import generate_base_video
 import logging
+from videoGen import generate_srt, generate_video
 
 logging.basicConfig(level=logging.INFO)
 
@@ -23,8 +24,16 @@ def main():
     stitched_video_path = generate_base_video("base_videos/minecraft_parkour_a.mp4", audio_path, 60)
     logging.info(f"Generated base video at {stitched_video_path}")
 
+    logging.info("Generating SRT file...")
+    generate_srt(script, stitched_video_path, "/subs/output.srt")
+
+    # generate video
+    logging.info("Generating video...")
+    generate_video("/subs/output.srt", stitched_video_path, "/final_videos/output.mp4")
+
     # overlay text on top of video
     # upload to instagram reels
+
 
 
 if __name__ == "__main__":
