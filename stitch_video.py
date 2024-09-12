@@ -6,6 +6,7 @@ import pysrt
 from moviepy.video.tools.subtitles import SubtitlesClip
 from moviepy.video.VideoClip import TextClip
 from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
+from moviepy.video.fx.lum_contrast import lum_contrast
 
 
 def generate_base_video(video_path: str, audio_path: str, script_text: str, audio_trim_length: int = 0) -> str:
@@ -69,6 +70,8 @@ def generate_base_video(video_path: str, audio_path: str, script_text: str, audi
     # Ensure the final video fits exactly the 9:16 aspect ratio (1080x1920)
     final_video_resized = final_video_array.resize((1080, 1920))
 
+    final_video_resized = final_video_resized.fx(lum_contrast, lum=1, contrast=1, contrast_thr=127)
+
     # Set the audio to the final video
     video_with_audio = final_video_resized.set_audio(audio)
 
@@ -87,12 +90,14 @@ def generate_base_video(video_path: str, audio_path: str, script_text: str, audi
 
     file_path = f"stitched_videos/{uuid.uuid4()}.mp4"
 
+
     # Save the output video with audio
     final_video.write_videofile(file_path, fps=24,
                                 codec='libx264',
                                 audio_codec='aac',
                                 temp_audiofile='temp-audio.m4a',
-                                remove_temp=True
+                                remove_temp=True,
+                                threads=4,
                                 )
 
     return file_path

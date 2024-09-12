@@ -70,6 +70,26 @@ def post_video(video_path: str):
         file_input = driver.find_element(By.XPATH, '//input[@type="file"]')
         file_input.send_keys(video_path)  # Send the path of the file to be uploaded
 
+        # reel popup
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, '//button[text()="OK"]'))
+        )
+        not_now_button = driver.find_element(By.XPATH, '//button[text()="OK"]')
+        not_now_button.click()
+
+        # crop
+        svg_element = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'svg[aria-label="Select crop"]'))
+        )
+        svg_element.click()
+
+        # click 9 x 16
+        svg_element = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'svg[aria-label="Crop portrait icon"]'))
+        )
+        svg_element.click()
+
+        # click next
         WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable(
                 (By.XPATH, '//div[@role="button" and contains(@class, "x1i10hfl") and text()="Next"]'))

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from reddit_scraper import scrape_posts
 from script_generator import ScriptGenerator
 from stitch_video import generate_base_video
@@ -28,9 +30,9 @@ def main():
         stitched_video_path = generate_base_video(settings.BASE_VIDEO_PATH, audio_path, script)
         logging.info(f"Generated base video at {stitched_video_path}")
 
-    # upload to instagram reels
-
-    post_video(stitched_video_path)
+    pwd = Path.cwd()
+    file_path = f"{pwd}/{stitched_video_path}"
+    post_video(file_path)
 
 
 if __name__ == "__main__":

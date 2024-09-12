@@ -26,7 +26,7 @@ def scrape_posts(count: int) -> list[RedditPost]:
     # Select the subreddit
     subreddit = reddit.subreddit(settings.SUBREDDIT_NAME)
 
-    top_posts = subreddit.top(limit=count, time_filter="hour")
+    top_posts = subreddit.top(limit=count, time_filter="year")
 
     for post in top_posts:
         comments = []
@@ -38,7 +38,7 @@ def scrape_posts(count: int) -> list[RedditPost]:
             else:
                 comments.append(comment_content)
 
-            if len(comments) == 3:
+            if len(comments) == 5:
                 break
 
         scraped_posts.append(
