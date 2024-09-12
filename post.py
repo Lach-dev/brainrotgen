@@ -52,7 +52,7 @@ def setup():
     except Exception as e:
         print(f"An error occurred: {e}")
 
-def post_video(video_path):
+def post_video(video_path: str):
     try:
         # wait for the create button to show up
         WebDriverWait(driver, 10).until(
@@ -87,7 +87,7 @@ def post_video(video_path):
                 (By.XPATH, '//div[@role="button" and contains(@class, "x1i10hfl") and text()="Share"]'))
         ).click()
 
-        time.sleep(10)
+        time.sleep(2000000)
 
         # refresh page
         driver.refresh()

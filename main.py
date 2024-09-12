@@ -30,7 +30,7 @@ def main():
 
     # upload to instagram reels
 
-    # post_video(stitched_video_path)
+    post_video(stitched_video_path)
 
 
 if __name__ == "__main__":
